@@ -40,18 +40,23 @@ const bookList = [
   },
 ];
 
-connect().then(() => {
-  console.log("Tenemos conexión");
-
-  // Borrar datos
-  Book.collection.drop().then(() => {
+const bookSeed = async () => {
+  try {
+    await connect();
+    console.log("Tenemos conexión");
+    // Borrar datos
+    Book.collection.drop();
     console.log("Usuarios eliminados");
 
     // Añadimos los libros
     const documents = bookList.map((book) => new Book(book));
-    Book.insertMany(documents)
-      .then(() => console.log("Datos guardados correctamente!"))
-      .catch((error) => console.error(error))
-      .finally(() => mongoose.disconnect());
-  });
-});
+    await Book.insertMany(documents);
+    console.log("Datos guardados correctamente!");
+  } catch (error) {
+    console.error(error);
+  } finally {
+    mongoose.disconnect();
+  }
+};
+
+bookSeed();
